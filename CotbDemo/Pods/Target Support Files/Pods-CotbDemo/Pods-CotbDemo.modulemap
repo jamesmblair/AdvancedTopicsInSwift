@@ -1,0 +1,6 @@
+framework module Pods_CotbDemo {
+  umbrella header "Pods-CotbDemo-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -1,0 +1,254 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1404\cocoasubrtf470
+{\fonttbl\f0\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue255;\red43\green131\blue159;\red0\green128\blue0;
+\red163\green21\blue21;}
+\margl1440\margr1440\vieww9000\viewh8400\viewkind0
+\deftab577
+\pard\tx577\pardeftab577\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf2 \CocoaLigature0 private\cf0  \cf2 enum\cf0  Section \{\
+    \cf2 case\cf0  Switch\
+    \cf2 case\cf0  TextEntry\
+    \cf2 case\cf0  SubmitButton\
+\}\
+\
+\cf2 private\cf0  \cf2 enum\cf0  ViewState \{\
+    \cf2 case\cf0  Disabled\
+    \cf2 case\cf0  Invalid(settings: \cf3 MySettings\cf0 ) \cf4 //(setting1: String, setting2: String)\
+\cf0     \cf2 case\cf0  Valid(settings: \cf3 MySettings\cf0 ) \cf4 //(setting1: String, setting2: String)\
+\cf0     \cf2 case\cf0  Submitting(settings: \cf3 MySettings\cf0 ) \cf4 //(setting1: String, setting2: String)\
+\cf0     \
+    \cf2 var\cf0  enabled: \cf3 Bool\cf0  \{\
+        \cf2 if\cf0  \cf2 case\cf0  .\cf3 Disabled\cf0  = \cf2 self\cf0  \{\
+            \cf2 return\cf0  \cf2 false\cf0 \
+        \} \cf2 else\cf0  \{\
+            \cf2 return\cf0  \cf2 true\cf0 \
+        \}\
+    \}\
+    \
+    \cf2 var\cf0  settings: \cf3 MySettings\cf0 ? \{\
+        \cf2 switch\cf0  \cf2 self\cf0  \{\
+        \cf2 case\cf0  .\cf3 Invalid\cf0 (\cf2 let\cf0  settings): \cf2 return\cf0  settings\
+        \cf2 case\cf0  .\cf3 Valid\cf0 (\cf2 let\cf0  settings): \cf2 return\cf0  settings\
+        \cf2 case\cf0  .\cf3 Submitting\cf0 (\cf2 let\cf0  settings): \cf2 return\cf0  settings\
+        \cf2 default\cf0 : \cf2 return\cf0  \cf2 nil\cf0 \
+        \}\
+    \}\
+    \
+    \cf2 init\cf0 (settings: \cf3 MySettings\cf0 ) \{\
+        \cf2 if\cf0  settings.\cf3 greeting\cf0 .\cf3 isEmpty\cf0  || settings.\cf3 name\cf0 .\cf3 isEmpty\cf0  \{\
+            \cf2 self\cf0  = .\cf3 Invalid\cf0 (settings: settings)\
+        \} \cf2 else\cf0  \{\
+            \cf2 self\cf0  = .\cf3 Valid\cf0 (settings: settings)\
+        \}\
+    \}\
+\}\
+\
+\cf2 class\cf0  BetterViewController : \cf3 UITableViewController\cf0 , \cf3 AlertPresentable\cf0  \{\
+    \cf2 private\cf0  \cf2 var\cf0  viewState: \cf3 ViewState\cf0  = .\cf3 Disabled\cf0  \{\
+        \cf2 didSet\cf0  \{ \cf3 transitionState\cf0 (oldValue, \cf3 viewState\cf0 ) \}\
+    \}\
+    \
+    \cf2 private\cf0  \cf2 var\cf0  activeSections: [\cf3 Section\cf0 ] \{\
+        \cf2 switch\cf0  \cf3 viewState\cf0  \{\
+        \cf2 case\cf0  .\cf3 Disabled\cf0 : \cf2 return\cf0  [.\cf3 Switch\cf0 ]\
+        \cf2 case\cf0  .\cf3 Invalid\cf0 : \cf2 return\cf0  [.\cf3 Switch\cf0 , .\cf3 TextEntry\cf0 ]\
+            \
+        \cf2 case\cf0  .\cf3 Valid\cf0 : \cf2 fallthrough\cf0 \
+        \cf2 case\cf0  .\cf3 Submitting\cf0 : \cf2 return\cf0  [.\cf3 Switch\cf0 , .\cf3 TextEntry\cf0 , .\cf3 SubmitButton\cf0 ]\
+        \}\
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  loadView() \{\
+        \cf3 tableView\cf0  = \cf3 UITableView\cf0 (frame: \cf3 CGRect\cf0 .zero, style: .\cf3 Grouped\cf0 )\
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  viewDidLoad() \{\
+        \cf2 super\cf0 .\cf3 viewDidLoad\cf0 ()\
+        \
+        \cf3 configureNavigationItem\cf0 ()\
+        \
+        \cf3 tableView\cf0 .\cf3 registerClass\cf0 (\cf3 SwitchCell\cf0 .\cf2 self\cf0 , forCellReuseIdentifier: \cf3 SwitchCell\cf0 .reuseIdentifier)\
+        \cf3 tableView\cf0 .\cf3 registerClass\cf0 (\cf3 TextEntryCell\cf0 .\cf2 self\cf0 , forCellReuseIdentifier: \cf3 TextEntryCell\cf0 .reuseIdentifier)\
+        \cf3 tableView\cf0 .\cf3 registerClass\cf0 (\cf3 ButtonCell\cf0 .\cf2 self\cf0 , forCellReuseIdentifier: \cf3 ButtonCell\cf0 .reuseIdentifier)\
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  numberOfSectionsInTableView(tableView: \cf3 UITableView\cf0 ) -> \cf3 Int\cf0  \{\
+        \cf2 return\cf0  \cf3 activeSections\cf0 .\cf3 count\cf0 \
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  tableView(tableView: \cf3 UITableView\cf0 , numberOfRowsInSection section: \cf3 Int\cf0 ) -> \cf3 Int\cf0  \{\
+        \cf2 switch\cf0  \cf3 activeSections\cf0 [section] \{\
+        \cf2 case\cf0  .\cf3 Switch\cf0 : \cf2 fallthrough\cf0 \
+        \cf2 case\cf0  .\cf3 SubmitButton\cf0 : \cf2 return\cf0  1\
+        \cf2 case\cf0  .\cf3 TextEntry\cf0 : \cf2 return\cf0  2\
+        \}\
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  tableView(tableView: \cf3 UITableView\cf0 , cellForRowAtIndexPath indexPath: \cf3 NSIndexPath\cf0 ) -> \cf3 UITableViewCell\cf0  \{\
+        \cf2 switch\cf0  \cf3 activeSections\cf0 [indexPath.\cf3 section\cf0 ] \{\
+        \cf2 case\cf0  .\cf3 Switch\cf0 :\
+            \cf2 let\cf0  cell: \cf3 SwitchCell\cf0  = \cf3 safeGetCell\cf0 (\cf2 for\cf0 : tableView, at: indexPath)\
+            cell.\cf3 label\cf0 .\cf3 text\cf0  = \cf5 "Enable a Cool Feature?"\cf0 \
+            cell.\cf3 toggleSwitch\cf0 .\cf3 onTintColor\cf0  = \cf3 cotbOrangeColor\cf0 \
+            cell.\cf3 toggleSwitch\cf0 .\cf3 on\cf0  = \cf3 viewState\cf0 .\cf3 enabled\cf0 \
+            cell.\cf3 delegate\cf0  = \cf2 self\cf0 \
+            \cf2 return\cf0  cell\
+\
+        \cf2 case\cf0  .\cf3 TextEntry\cf0 :\
+            \cf2 guard\cf0  \cf2 let\cf0  settings = \cf3 viewState\cf0 .\cf3 settings\cf0 \
+                \cf2 else\cf0  \{ \cf3 fatalError\cf0 (\cf5 "Invalid state."\cf0 ) \}\
+            \
+            \cf2 let\cf0  cell: \cf3 TextEntryCell\cf0  = \cf3 safeGetCell\cf0 (\cf2 for\cf0 : tableView, at: indexPath)\
+            \
+            \cf2 switch\cf0  indexPath.\cf3 row\cf0  \{\
+            \cf2 case\cf0  0:\
+                cell.\cf3 textField\cf0 .\cf3 placeholder\cf0  = \cf5 "Greeting"\cf0 \
+                cell.\cf3 textField\cf0 .\cf3 text\cf0  = settings.\cf3 greeting\cf0 \
+                cell.\cf3 delegate\cf0  = \cf2 self\cf0 \
+            \cf2 case\cf0  1:\
+                cell.\cf3 textField\cf0 .\cf3 placeholder\cf0  = \cf5 "Name"\cf0 \
+                cell.\cf3 textField\cf0 .\cf3 text\cf0  = settings.\cf3 name\cf0 \
+                cell.\cf3 delegate\cf0  = \cf2 self\cf0 \
+            \cf2 default\cf0 : \cf3 fatalError\cf0 (\cf5 "Invalid row index."\cf0 )\
+            \}\
+            \
+            \cf2 return\cf0  cell\
+\
+        \cf2 case\cf0  .\cf3 SubmitButton\cf0 :\
+            \cf2 let\cf0  cell: \cf3 ButtonCell\cf0  = \cf3 safeGetCell\cf0 (\cf2 for\cf0 : tableView, at: indexPath)\
+            cell.\cf3 button\cf0 .\cf3 setTitle\cf0 (\cf5 "Submit"\cf0 , forState: .Normal)\
+            cell.\cf3 button\cf0 .\cf3 setTitleColor\cf0 (\cf3 cotbOrangeColor\cf0 , forState: .Normal)\
+            cell.\cf3 button\cf0 .\cf3 setTitleColor\cf0 (\cf3 cotbOrangeColor\cf0 .\cf3 colorWithAlphaComponent\cf0 (0.3), forState: .Disabled)\
+            cell.\cf3 delegate\cf0  = \cf2 self\cf0 \
+            \cf2 return\cf0  cell\
+\
+        \}\
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  tableView(tableView: \cf3 UITableView\cf0 , titleForHeaderInSection section: \cf3 Int\cf0 ) -> \cf3 String\cf0 ? \{\
+        \cf2 if\cf0  \cf2 case\cf0  .\cf3 TextEntry\cf0  = \cf3 activeSections\cf0 [section] \{\
+            \cf2 return\cf0  \cf5 "Configure the Cool Feature"\cf0 \
+        \}\
+        \cf2 return\cf0  \cf2 nil\cf0 \
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  tableView(tableView: \cf3 UITableView\cf0 , shouldHighlightRowAtIndexPath indexPath: \cf3 NSIndexPath\cf0 ) -> \cf3 Bool\cf0  \{\
+        \cf2 if\cf0  \cf2 case\cf0  .\cf3 SubmitButton\cf0  = \cf3 activeSections\cf0 [indexPath.\cf3 section\cf0 ] \{\
+            \cf2 return\cf0  \cf2 false\cf0 \
+        \}\
+        \cf2 return\cf0  \cf2 true\cf0 \
+    \}\
+    \
+    \cf2 override\cf0  \cf2 func\cf0  tableView(tableView: \cf3 UITableView\cf0 , didSelectRowAtIndexPath indexPath: \cf3 NSIndexPath\cf0 ) \{\
+        \cf2 switch\cf0  \cf3 activeSections\cf0 [indexPath.\cf3 section\cf0 ] \{\
+        \cf2 case\cf0  .\cf3 Switch\cf0 :\
+            \cf2 let\cf0  cell = tableView.\cf3 cellForRowAtIndexPath\cf0 (indexPath) \cf2 as\cf0 ! \cf3 SwitchCell\cf0 \
+            cell.\cf3 toggleSwitch\cf0 .\cf3 on\cf0  = !cell.\cf3 toggleSwitch\cf0 .\cf3 on\cf0 \
+            \cf3 switchWasToggled\cf0 (cell, on: cell.\cf3 toggleSwitch\cf0 .\cf3 on\cf0 )\
+            \
+        \cf2 case\cf0  .\cf3 TextEntry\cf0 :\
+            \cf2 let\cf0  cell = tableView.\cf3 cellForRowAtIndexPath\cf0 (indexPath) \cf2 as\cf0 ! \cf3 TextEntryCell\cf0 \
+            cell.\cf3 textField\cf0 .\cf3 becomeFirstResponder\cf0 ()\
+            \
+        \cf2 default\cf0 : \cf3 fatalError\cf0 (\cf5 "Invalid section index."\cf0 )\
+            \
+        \}\
+        \
+        tableView.\cf3 deselectRowAtIndexPath\cf0 (indexPath, animated: \cf2 true\cf0 )\
+    \}\
+    \
+    \cf2 private\cf0  \cf2 func\cf0  configureNavigationItem() \{\
+        \cf3 title\cf0  = \cf5 "Demo"\cf0 \
+        \
+        \cf3 navigationController\cf0 !.\cf3 navigationBar\cf0 .\cf3 titleTextAttributes\cf0  = [\cf3 NSForegroundColorAttributeName\cf0 :\cf3 UIColor\cf0 .\cf3 whiteColor\cf0 ()]\
+        \cf3 navigationController\cf0 !.\cf3 navigationBar\cf0 .\cf3 barTintColor\cf0  = \cf3 cotbOrangeColor\cf0 \
+        \cf3 navigationController\cf0 !.\cf3 navigationBar\cf0 .\cf3 translucent\cf0  = \cf2 false\cf0 \
+        \
+        \cf2 let\cf0  cancelButton = \cf3 UIBarButtonItem\cf0 (barButtonSystemItem: .\cf3 Cancel\cf0 , target: \cf2 self\cf0 , action: \cf2 #selector\cf0 (\cf3 cancel\cf0 ))\
+        cancelButton.\cf3 setTitleTextAttributes\cf0 ([\cf3 NSForegroundColorAttributeName\cf0 :\cf3 UIColor\cf0 .\cf3 whiteColor\cf0 ()], forState: .Normal)\
+        \
+        \cf3 navigationItem\cf0 .\cf3 leftBarButtonItem\cf0  = cancelButton\
+    \}\
+    \
+    \cf2 private\cf0  \cf2 func\cf0  transitionState(oldState: \cf3 ViewState\cf0 , \cf2 _\cf0  newState: \cf3 ViewState\cf0 ) \{\
+        \cf2 switch\cf0  (oldState, newState) \{\
+        \cf4 // Ignore "self" transitions\
+\cf0         \cf2 case\cf0  (.\cf3 Disabled\cf0 , .\cf3 Disabled\cf0 ): \cf2 fallthrough\cf0 \
+        \cf2 case\cf0  (.\cf3 Invalid\cf0 , .\cf3 Invalid\cf0 ): \cf2 fallthrough\cf0 \
+        \cf2 case\cf0  (.\cf3 Valid\cf0 , .\cf3 Valid\cf0 ): \cf2 fallthrough\cf0 \
+        \cf2 case\cf0  (.\cf3 Submitting\cf0 , .\cf3 Submitting\cf0 ): \cf2 return\cf0 \
+            \
+        \cf4 // From 'Disabled'\
+\cf0         \cf2 case\cf0  (.\cf3 Disabled\cf0 , .\cf3 Invalid\cf0 ):\
+            \cf3 tableView\cf0 .\cf3 insertSections\cf0 (\cf3 NSIndexSet\cf0 (index: 1), withRowAnimation: .\cf3 Middle\cf0 )\
+            \
+        \cf4 // From 'Invalid'\
+\cf0         \cf2 case\cf0  (.\cf3 Invalid\cf0 , .\cf3 Disabled\cf0 ):\
+            \cf3 tableView\cf0 .\cf3 deleteSections\cf0 (\cf3 NSIndexSet\cf0 (index: 1), withRowAnimation: .\cf3 Middle\cf0 )\
+        \cf2 case\cf0  (.\cf3 Invalid\cf0 , .\cf3 Valid\cf0 ):\
+            \cf3 tableView\cf0 .\cf3 insertSections\cf0 (\cf3 NSIndexSet\cf0 (index: 2), withRowAnimation: .\cf3 Middle\cf0 )\
+            \
+        \cf4 // From 'Valid'\
+\cf0         \cf2 case\cf0  (.\cf3 Valid\cf0 , .\cf3 Disabled\cf0 ):\
+            \cf3 tableView\cf0 .\cf3 deleteSections\cf0 (\cf3 NSIndexSet\cf0 (indexesInRange: \cf3 NSRange\cf0 (1...2)), withRowAnimation: .\cf3 Middle\cf0 )\
+        \cf2 case\cf0  (.\cf3 Valid\cf0 , .\cf3 Invalid\cf0 ):\
+            \cf3 tableView\cf0 .\cf3 deleteSections\cf0 (\cf3 NSIndexSet\cf0 (index: 2), withRowAnimation: .\cf3 Middle\cf0 )\
+        \cf2 case\cf0  (.\cf3 Valid\cf0 , .\cf3 Submitting\cf0 ):\
+            \cf3 MBProgressHUD\cf0 .\cf3 showHUDAddedTo\cf0 (\cf3 view\cf0 , animated: \cf2 true\cf0 )\
+            \
+        \cf4 // From 'Submitting'\
+\cf0         \cf2 case\cf0  (.\cf3 Submitting\cf0 , .\cf3 Valid\cf0 ):\
+            \cf3 MBProgressHUD\cf0 .\cf3 hideHUDForView\cf0 (\cf3 view\cf0 , animated: \cf2 true\cf0 )\
+            \
+        \cf2 default\cf0 : \cf3 fatalError\cf0 (\cf5 "Invalid state transition."\cf0 )\
+        \}\
+    \}\
+    \
+    \cf2 private\cf0  \cf2 var\cf0  cotbOrangeColor: \cf3 UIColor\cf0  \{\
+        \cf2 return\cf0  \cf3 presentingViewController\cf0 !.\cf3 view\cf0 .\cf3 backgroundColor\cf0 !\
+    \}\
+    \
+    \cf2 @objc\cf0  \cf2 private\cf0  \cf2 func\cf0  cancel() \{\
+        \cf3 dismissViewControllerAnimated\cf0 (\cf2 true\cf0 , completion: \cf2 nil\cf0 )\
+    \}\
+\}\
+\
+\
+\cf4 // MARK: - BetterViewController (SwitchCellDelegate)\
+\cf2 extension\cf0  \cf3 BetterViewController\cf0  : \cf3 SwitchCellDelegate\cf0  \{\
+    \cf2 func\cf0  switchWasToggled(sender: \cf3 SwitchCell\cf0 , on: \cf3 Bool\cf0 ) \{\
+        \cf3 viewState\cf0  = on ? .\cf3 Invalid\cf0 (settings: .empty) : .\cf3 Disabled\cf0 \
+    \}\
+\}\
+\
+\
+\cf4 // MARK: - BetterViewController (TextEntryCellDelegate)\
+\cf2 extension\cf0  \cf3 BetterViewController\cf0  : \cf3 TextEntryCellDelegate\cf0  \{\
+    \cf2 func\cf0  textDidChange(sender: \cf3 TextEntryCell\cf0 , text: \cf3 String\cf0 ) \{\
+        \cf2 guard\cf0  \cf2 let\cf0  indexPath = \cf3 tableView\cf0 .\cf3 indexPathForCell\cf0 (sender)\
+            \cf2 else\cf0  \{ \cf2 return\cf0  \}\
+        \cf2 guard\cf0  \cf2 let\cf0  settings = \cf3 viewState\cf0 .\cf3 settings\cf0 \
+            \cf2 else\cf0  \{ \cf3 fatalError\cf0 (\cf5 "Invalid state."\cf0 ) \}\
+        \
+        \cf2 switch\cf0  indexPath.\cf3 row\cf0  \{\
+        \cf2 case\cf0  0: \cf3 viewState\cf0  = \cf3 ViewState\cf0 (settings: settings.\cf3 with\cf0 (greeting: text))\
+        \cf2 case\cf0  1: \cf3 viewState\cf0  = \cf3 ViewState\cf0 (settings: settings.\cf3 with\cf0 (name: text))\
+        \cf2 default\cf0 : \cf3 fatalError\cf0 (\cf5 "Invalid row index."\cf0 )\
+        \}\
+    \}\
+\}\
+\
+\
+\cf4 // MARK: - BetterViewController (ButtonCellDelegate)\
+\cf2 extension\cf0  \cf3 BetterViewController\cf0  : \cf3 ButtonCellDelegate\cf0  \{\
+    \cf2 func\cf0  buttonWasPressed(sender: \cf3 ButtonCell\cf0 ) \{\
+        \cf2 guard\cf0  \cf2 let\cf0  settings = \cf3 viewState\cf0 .\cf3 settings\cf0 \
+            \cf2 else\cf0  \{ \cf3 fatalError\cf0 (\cf5 "Invalid state."\cf0 ) \}\
+        \
+        \cf3 SettingsService\cf0 .sharedService.\cf3 saveSettings\cf0 (settings) \{\
+            \cf2 self\cf0 .\cf3 presentAlert\cf0 (\cf5 "\cf0 \\\cf5 (\cf0 settings.\cf3 greeting\cf5 ), \cf0 \\\cf5 (\cf0 settings.\cf3 name\cf5 )!"\cf0 )\
+        \}\
+    \}\
+\}\
+}
