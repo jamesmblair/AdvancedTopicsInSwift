@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		1A3D66E01D5CB76A00F73B1A /* SegueHandlerType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D66DF1D5CB76A00F73B1A /* SegueHandlerType.swift */; };
-		1A3D66E21D5CBDD900F73B1A /* Better.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 1A3D66E11D5CBDD900F73B1A /* Better.rtf */; };
 		1A652CD71D5BDD2500C41351 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A652CD61D5BDD2500C41351 /* AppDelegate.swift */; };
 		1A652CD91D5BDD2500C41351 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1A652CD81D5BDD2500C41351 /* ViewController.swift */; };
 		1A652CDC1D5BDD2500C41351 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1A652CDA1D5BDD2500C41351 /* Main.storyboard */; };
@@ -32,7 +31,6 @@
 /* Begin PBXFileReference section */
 		13D1A6DCA89CE419C6650464 /* Pods-CotbDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CotbDemo.debug.xcconfig"; path = "Pods/Target Support Files/Pods-CotbDemo/Pods-CotbDemo.debug.xcconfig"; sourceTree = "<group>"; };
 		1A3D66DF1D5CB76A00F73B1A /* SegueHandlerType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SegueHandlerType.swift; sourceTree = "<group>"; };
-		1A3D66E11D5CBDD900F73B1A /* Better.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Better.rtf; sourceTree = "<group>"; };
 		1A652CD31D5BDD2500C41351 /* CotbDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CotbDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1A652CD61D5BDD2500C41351 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1A652CD81D5BDD2500C41351 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -102,7 +100,6 @@
 				1A652CDD1D5BDD2500C41351 /* Assets.xcassets */,
 				1A652CDF1D5BDD2500C41351 /* LaunchScreen.storyboard */,
 				1A652CE21D5BDD2500C41351 /* Info.plist */,
-				1A3D66E11D5CBDD900F73B1A /* Better.rtf */,
 			);
 			path = CotbDemo;
 			sourceTree = "<group>";
@@ -217,7 +214,6 @@
 			files = (
 				1A652CE11D5BDD2500C41351 /* LaunchScreen.storyboard in Resources */,
 				1A652CDE1D5BDD2500C41351 /* Assets.xcassets in Resources */,
-				1A3D66E21D5CBDD900F73B1A /* Better.rtf in Resources */,
 				1A652CDC1D5BDD2500C41351 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
